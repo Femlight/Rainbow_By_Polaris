@@ -67,16 +67,15 @@ class _WelcomeBackState extends State<WelcomeBack> {
         isBiometricLogin: true,
       );
       final authSource = AuthDataSource();
-      print('Am here');
+
       setState(() => isLoading = true);
       final result = await authSource.loginUser(request);
       setState(() => isLoading = false);
       result?.fold((l) {
         Messenger.error(context, l);
       }, (r) {
-        print('Am Available');
-         final decodedData = json.decode(r.value.refreshToken!);
-        print('DECODED $decodedData');
+        final decodedData = json.decode(r.value.refreshToken!);
+
         final userProfileDto = UserProfileDto.fromJson(decodedData);
 
         WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
@@ -86,7 +85,6 @@ class _WelcomeBackState extends State<WelcomeBack> {
                   builder: (context) => Dashboard(
                         userProfileDto: userProfileDto,
                       )));
-          print('I day cook');
         });
       });
     }

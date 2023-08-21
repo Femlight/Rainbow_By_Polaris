@@ -19,46 +19,38 @@ class AuthDataSource {
       : _apiClient = apiClient ?? ApiClient();
   final ApiClient _apiClient;
 
-  Future<ValidateAccountNumberResDto> validateAccount(ValidateAccountNumberDto request) async {
+  Future<ValidateAccountNumberResDto> validateAccount(
+      ValidateAccountNumberDto request) async {
     try {
       // var url = '/sso-account-register';
       final url = Uri.parse(
           'https://polaris-rainbow-identity-api-dev.azurewebsites.net/sso-account-register');
-      print("url" + url.toString());
 
-      final respose = await http.post(
-        url,
-        body: jsonEncode(request.toJson()),
-        headers: {
-          "Content-Type": "application/json"
-        }
-      );
-      // final output = await _apiClient.post(url, data: request.toJson(),);
-      print('debug response-----' + respose.body);
+      final respose = await http.post(url,
+          body: jsonEncode(request.toJson()),
+          headers: {"Content-Type": "application/json"});
 
-       final decodedData = jsonDecode(respose.body) ;
+      final decodedData = jsonDecode(respose.body);
 
       if (decodedData['isSuccess'] == true) {
-        ValidateAccountNumberResDto validate = ValidateAccountNumberResDto.fromJson(decodedData);
-        print("success");
+        ValidateAccountNumberResDto validate =
+            ValidateAccountNumberResDto.fromJson(decodedData);
+
         return validate;
       } else {
-         var errorData = jsonDecode(respose.body);
-         String error = errorData['error'];
-        print("error----" + error);
+        var errorData = jsonDecode(respose.body);
+        String error = errorData['error'];
 
-        print("error");
         throw Failure(error);
-
       }
     } on SocketException catch (_) {
       throw Failure("No internet connection");
     } on HttpException {
       throw Failure("Service not currently available");
-    }on Failure catch (e) {
+    } on Failure catch (e) {
       throw Failure(e.message);
     } catch (e, x) {
-      print("----1"+ x.toString());
+
       throw Failure("Something went wrong. Try again");
     }
   }
@@ -76,7 +68,7 @@ class AuthDataSource {
       }
     } catch (e) {
       if (e is DioException) {
-        print(e.response!.data);
+
       }
     }
     return null;
@@ -94,7 +86,7 @@ class AuthDataSource {
       }
     } catch (e) {
       if (e is DioException) {
-        print(e.response!.data);
+
       }
     }
     return null;
@@ -112,7 +104,7 @@ class AuthDataSource {
       }
     } catch (e) {
       if (e is DioException) {
-        print(e.response!.data);
+
       }
     }
     return null;
@@ -134,7 +126,7 @@ class AuthDataSource {
     } catch (e) {
       if (e is DioException) {
         final error = e.response!.data['value'][0]['message'];
-        print(e.response!.data);
+
         return Left(error);
       }
     }

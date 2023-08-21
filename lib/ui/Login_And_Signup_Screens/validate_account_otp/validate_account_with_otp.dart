@@ -207,7 +207,7 @@ class _ValidateAccountWithOTPState extends State<ValidateAccountWithOTP> {
       final response = await authSource.resendOtp(request);
       setState(() => isLoading = false);
       response!.fold((l) => Messenger.error(context, l), (r) {
-        print(r);
+
       });
     }
   }

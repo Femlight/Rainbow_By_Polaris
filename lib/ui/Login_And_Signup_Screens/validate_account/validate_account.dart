@@ -4,7 +4,6 @@ import 'package:provider/provider.dart';
 import 'package:rainbow_by_polaris/core/enums/query_state.dart';
 import 'package:rainbow_by_polaris/core/enums/request_state.dart';
 import 'package:rainbow_by_polaris/core/provider/account_validation_provider.dart';
-import 'package:rainbow_by_polaris/core/util.dart';
 import 'package:rainbow_by_polaris/core/widgets/loading_overlay_view.dart';
 import 'package:rainbow_by_polaris/ui/Login_And_Signup_Screens/validate_account_otp/validate_account_with_otp.dart';
 import '../../../core/constants/colors.dart';

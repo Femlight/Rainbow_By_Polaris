@@ -4,9 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:rainbow_by_polaris/core/constants/colors.dart';
 import 'package:rainbow_by_polaris/core/service_locator.dart';
 import 'package:rainbow_by_polaris/service/datasource.dart';
-import 'package:rainbow_by_polaris/ui/Login_And_Signup_Screens/validate_account/validate_account.dart';
 import 'package:rainbow_by_polaris/ui/Parent_Profile_Screens/dashboard.dart';
-
 import 'core/provider/account_validation_provider.dart';
 import 'ui/Login_And_Signup_Screens/splashscreen/splash_screen.dart';
 
@@ -36,7 +34,7 @@ class MyApp extends StatelessWidget {
               theme: ThemeData(
                 primaryColor: AppColor.primaryColor2
               ),
-              home: SplashScreen(),
+              home: const SplashScreen(),
             );
           }),
     );
