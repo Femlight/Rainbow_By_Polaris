@@ -2,26 +2,22 @@
 import 'dart:convert';
 
 class ValidateAccountNumberDto {
-  String? customertypeid;
-  String accoutNumber;
+  final String? customertypeid;
+  final String? accoutNumber;
 
   ValidateAccountNumberDto({
     this.customertypeid,
-    required this.accoutNumber,
+    this.accoutNumber,
   });
 
-  String toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
+  factory ValidateAccountNumberDto.fromJson(Map<String, dynamic> json) =>
+      ValidateAccountNumberDto(
+        customertypeid: json["customertypeid"],
+        accoutNumber: json["accoutNumber"],
+      );
 
-    data['customertypeid'] = customertypeid;
-    data['accoutNumber'] = accoutNumber;
-
-    return json.encode(data);
-  }
-
-  //delete later
-  Map<String, dynamic> tJson() => {
-    'customertypeid': customertypeid,
-    'accoutNumber': accoutNumber
-  };
+  Map<String, dynamic> toJson() => {
+        "customertypeid": customertypeid,
+        "accoutNumber": accoutNumber,
+      };
 }

@@ -67,22 +67,20 @@ class _WelcomeBackState extends State<WelcomeBack> {
         isBiometricLogin: true,
       );
       final authSource = AuthDataSource();
-      print('I BEG');
+      print('Am here');
       setState(() => isLoading = true);
       final result = await authSource.loginUser(request);
       setState(() => isLoading = false);
       result?.fold((l) {
         Messenger.error(context, l);
       }, (r) {
-        print('I day here please work');
-        // print(r.value.accessToken.toString());
-        // print(r.value.refreshToken);
-        final decodedData = json.decode(r.value.refreshToken!);
-        print('DECODED'+decodedData);
+        print('Am Available');
+         final decodedData = json.decode(r.value.refreshToken!);
+        print('DECODED $decodedData');
         final userProfileDto = UserProfileDto.fromJson(decodedData);
 
         WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-          Navigator.push(
+          Navigator.pushReplacement(
               context,
               MaterialPageRoute(
                   builder: (context) => Dashboard(

@@ -1,32 +1,41 @@
-class ValidateAccountResponseDto {
-  final dynamic value;
-  final bool isSuccess;
-  final String error;
-  final dynamic message;
-  final String responseCode;
+// To parse this JSON data, do
+//
+//     final validateAccountNumberResDto = validateAccountNumberResDtoFromJson(jsonString);
 
-  ValidateAccountResponseDto({
-    required this.value,
-    required this.isSuccess,
-    required this.error,
-    required this.message,
-    required this.responseCode,
+import 'dart:convert';
+
+ValidateAccountNumberResDto validateAccountNumberResDtoFromJson(String str) => ValidateAccountNumberResDto.fromJson(json.decode(str));
+
+String validateAccountNumberResDtoToJson(ValidateAccountNumberResDto data) => json.encode(data.toJson());
+
+class ValidateAccountNumberResDto {
+  final String? value;
+  final bool? isSuccess;
+  final String? error;
+  final dynamic message;
+  final dynamic responseCode;
+
+  ValidateAccountNumberResDto({
+    this.value,
+    this.isSuccess,
+    this.error,
+    this.message,
+    this.responseCode,
   });
 
-  factory ValidateAccountResponseDto.fromJson(Map<String, dynamic> json) =>
-      ValidateAccountResponseDto(
-        value: json["value"],
-        isSuccess: json["isSuccess"],
-        error: json["error"],
-        message: json["message"],
-        responseCode: json["responseCode"],
-      );
+  factory ValidateAccountNumberResDto.fromJson(Map<String, dynamic> json) => ValidateAccountNumberResDto(
+    value: json["value"],
+    isSuccess: json["isSuccess"],
+    error: json["error"],
+    message: json["message"],
+    responseCode: json["responseCode"],
+  );
 
   Map<String, dynamic> toJson() => {
-        "value": value,
-        "isSuccess": isSuccess,
-        "error": error,
-        "message": message,
-        "responseCode": responseCode,
-      };
+    "value": value,
+    "isSuccess": isSuccess,
+    "error": error,
+    "message": message,
+    "responseCode": responseCode,
+  };
 }

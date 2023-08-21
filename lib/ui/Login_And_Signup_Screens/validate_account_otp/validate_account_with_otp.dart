@@ -59,7 +59,7 @@ class _ValidateAccountWithOTPState extends State<ValidateAccountWithOTP> {
       final response = await authSource.verifyAccountPhone(request);
       setState(() => isLoading = false);
       response!.fold((l) => Messenger.error(context, l), (r) {
-        Navigator.push(
+        Navigator.pushReplacement(
             context,
             CupertinoPageRoute(
                 builder: (context) => AccountValidated(

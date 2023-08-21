@@ -99,7 +99,7 @@ class _CreateAccountState extends State<CreateAccount> {
         Messenger.error(context, l);
       }, (r) {
         WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-          Navigator.push(context,
+          Navigator.pushReplacement(context,
               CupertinoPageRoute(builder: (context) => const AccountCreated()));
         });
       });

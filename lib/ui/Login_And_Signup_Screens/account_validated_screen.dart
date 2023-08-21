@@ -47,7 +47,7 @@ class _AccountValidatedState extends State<AccountValidated> {
               ),
               BuildButton(
                 onPressed: () {
-                  AppNavigator.to(
+                  AppNavigator.pushReplacement(
                       context,
                       CreateAccount(
                         value: widget.value,
