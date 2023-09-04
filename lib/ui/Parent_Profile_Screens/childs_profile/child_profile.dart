@@ -5,7 +5,10 @@ import '../../../core/constants/colors.dart';
 import '../../../core/helpers/navigator.dart';
 import '../../../core/styles/app_text.dart';
 import '../../../core/styles/spacing.dart';
+import '../../../core/util.dart';
 import '../../../core/widgets/appbars/custom_appbar.dart';
+import '../../../data/user_details/user_details_model.dart';
+import '../../../service/services/get_user_details.dart';
 import '../settings/notification.dart';
 import '../settings/widgets/account_button.dart';
 import '../task/create_task.dart';
@@ -16,8 +19,17 @@ import '../widgets/widgets.dart';
 import 'parent_Profile_children_task.dart';
 
 class ChildProfile extends StatefulWidget {
-  const ChildProfile({super.key});
+  const ChildProfile(
+      {super.key,
+      required this.firstName,
+      required this.accountNo,
+      required this.id,
+      required this.lastName});
 
+  final String firstName;
+  final String lastName;
+  final String accountNo;
+  final String id;
   @override
   State<ChildProfile> createState() => _ChildProfileState();
 }
@@ -57,21 +69,26 @@ class _ChildProfileState extends State<ChildProfile> {
               height: 30.h,
             ),
             Column(
-              // crossAxisAlignment: CrossAxisAlignment.center,
-              // mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const CircleAvatar(
-                  radius: 40,
+                CircleAvatar(
+                  backgroundColor: AppColor.primaryColor,
+                  radius: 50,
+                  child: appText(
+                      inputText: widget.firstName[0].toString() +
+                          widget.lastName[0].toString(),
+                      fontSize: 30.sp,
+                      weight: FontWeight.w500,
+                      colorName: AppColor.whiteColor),
                 ),
                 SizedBox(
                   height: 15.h,
                 ),
                 appText(
-                    inputText: 'Aaron Peters',
+                    inputText: '${widget.lastName} ${widget.firstName}',
                     fontSize: 14.sp,
                     weight: FontWeight.w600,
                     colorName: AppColor.textPrimary),
-                copyTex(textToCopy: '12340987566'),
+                copyText(textToCopy: widget.accountNo),
               ],
             ),
             Row(
@@ -79,7 +96,12 @@ class _ChildProfileState extends State<ChildProfile> {
               children: [
                 OutlineContainer(
                   onTap: () {
-                    AppNavigator.to(context, const CreateTask());
+                    AppNavigator.to(
+                        context,
+                        CreateTask(
+                          firstName: widget.firstName.toString(),
+                          id:  widget.id.toString(),
+                        ));
                   },
                   text: 'Create task',
                   width: 133,
@@ -125,7 +147,7 @@ class _ChildProfileState extends State<ChildProfile> {
     );
   }
 
-  Row copyTex({
+  Row copyText({
     required String textToCopy,
   }) {
     return Row(
@@ -148,10 +170,6 @@ class _ChildProfileState extends State<ChildProfile> {
   Future<void> _copyToClipboard({required String textToCopy}) async {
     await Clipboard.setData(ClipboardData(text: textToCopy));
     // ignore: use_build_context_synchronously
-    successTopSnackBar(context: context, message: 'Copied to clipboard');
-    // ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-    //   duration: Duration(milliseconds: 500),
-    //   content: Text('Copied "${textToCopy}" to clipboard'),
-    // ));
+    Messenger.success(context, 'Copied to clipboard');
   }
 }

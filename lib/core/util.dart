@@ -176,18 +176,13 @@ class Messenger {
 
   static final Color _black = Colors.black.withOpacity(.8);
 
-  static void success(BuildContext context, String message, {int delay = 10}) {
+  static void success(BuildContext context, String message, {int delay = 03}) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
           content: Text(message),
           duration: Duration(seconds: delay),
           backgroundColor: AppColor.primaryColor),
     );
-    Flushbar(
-      message: message,
-      duration: Duration(seconds: delay),
-      backgroundColor: AppColor.primaryColor,
-    ).show(context);
   }
 
   static void error(BuildContext context, String message, {int delay = 3}) {
@@ -198,12 +193,6 @@ class Messenger {
         backgroundColor: _black,
       ),
     );
-    // Flushbar(
-    //   message: message,
-    //   duration: Duration(seconds: delay),
-    //   backgroundColor: _black,
-    //   padding: EdgeInsets.zero,
-    // ).show(context);
   }
 
   static void info(BuildContext context, String message, {int delay = 3}) {
@@ -222,9 +211,6 @@ class Messenger {
   }
 }
 
-
-
-
 class DioExceptions implements Exception {
   DioExceptions.fromDioError(DioException dioError) {
     switch (dioError.type) {
@@ -241,8 +227,7 @@ class DioExceptions implements Exception {
         message = "Receive timeout";
         break;
       case DioExceptionType.values:
-        message =
-            _handleError(dioError.response?.data);
+        message = _handleError(dioError.response?.data);
         break;
       case DioExceptionType.sendTimeout:
         message = "Send timeout";
@@ -257,9 +242,9 @@ class DioExceptions implements Exception {
 
   String _handleError(dynamic error) {
     final data = error['message'];
-    if(data is String){
+    if (data is String) {
       return data;
-    }else if(data is List){
+    } else if (data is List) {
       return data[0];
     }
     return '';

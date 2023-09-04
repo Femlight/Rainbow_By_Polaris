@@ -111,15 +111,7 @@ class _ValidateAccountState extends State<ValidateAccount> {
                       onPressed: () {
                         model.validateAccount(
                             accountNumberController.text.trim());
-                        // submit();
-                        // // Navigator.push(
-                        // //     context,
-                        // //     MaterialPageRoute(
-                        // //         builder: (context) => ValidateAccountWithOTP(
-                        // //           accoutNumber: accountNumberController.text.trim(),
-                        // //           value: customertypeid,
-                        // //         )));
-                      },
+                                             },
                       buttonText: 'Next',
                       containerHeight: 44.h,
                       containerWidth: 189.w,

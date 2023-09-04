@@ -3,17 +3,23 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/constants/colors.dart';
 import '../../../../core/styles/app_text.dart';
+import '../../../../data/data_storage/user_storage.dart';
 import '../../../../data/dtos/user_profile/user_profile.dart';
 
 class PersonalInfo extends StatefulWidget {
-  const PersonalInfo({super.key, this.userProfileDto});
-  final UserProfileDto? userProfileDto;
+  const PersonalInfo({
+    super.key,
+  });
 
   @override
   State<PersonalInfo> createState() => _PersonalInfoState();
 }
 
 class _PersonalInfoState extends State<PersonalInfo> {
+  String lastName = UserStorage.retrieveLastName();
+  String firstName = UserStorage.retrieveFirstName();
+  String phoneNumber = UserStorage.retrievePhoneNumber();
+
   @override
   Widget build(BuildContext context) {
     return SizedBox(
@@ -34,7 +40,7 @@ class _PersonalInfoState extends State<PersonalInfo> {
               height: 10.h,
             ),
             appText(
-              inputText: widget.userProfileDto!.firstName!,
+              inputText: firstName,
               fontSize: 14.sp,
               weight: FontWeight.w400,
               colorName: AppColor.textPrimary,
@@ -65,7 +71,7 @@ class _PersonalInfoState extends State<PersonalInfo> {
               height: 10.h,
             ),
             appText(
-              inputText: widget.userProfileDto!.lastName!,
+              inputText: lastName,
               fontSize: 14.sp,
               weight: FontWeight.w400,
               colorName: AppColor.textPrimary,
@@ -87,7 +93,7 @@ class _PersonalInfoState extends State<PersonalInfo> {
             ),
             SizedBox(height: 30.h),
             appText(
-              inputText: 'Phone Number',
+              inputText: "Phone Number",
               fontSize: 12.sp,
               weight: FontWeight.w300,
               colorName: AppColor.textPrimary,
@@ -96,38 +102,7 @@ class _PersonalInfoState extends State<PersonalInfo> {
               height: 10.h,
             ),
             appText(
-              inputText: widget.userProfileDto!.phoneNumber!,
-              fontSize: 14.sp,
-              weight: FontWeight.w400,
-              colorName: AppColor.textPrimary,
-            ),
-            SizedBox(
-              height: 5.h,
-            ),
-            Container(
-              width: double.infinity,
-              decoration: const ShapeDecoration(
-                shape: RoundedRectangleBorder(
-                  side: BorderSide(
-                    width: 0.50,
-                    strokeAlign: BorderSide.strokeAlignCenter,
-                    color: AppColor.blackColor,
-                  ),
-                ),
-              ),
-            ),
-            SizedBox(height: 30.h),
-            appText(
-              inputText: 'BVN',
-              fontSize: 12.sp,
-              weight: FontWeight.w300,
-              colorName: AppColor.textPrimary,
-            ),
-            SizedBox(
-              height: 10.h,
-            ),
-            appText(
-              inputText: '234*******',
+              inputText: phoneNumber,
               fontSize: 14.sp,
               weight: FontWeight.w400,
               colorName: AppColor.textPrimary,

@@ -5,7 +5,9 @@ import 'package:rainbow_by_polaris/core/constants/colors.dart';
 import 'package:rainbow_by_polaris/core/styles/app_text.dart';
 import '../../../core/helpers/navigator.dart';
 import '../../../core/styles/spacing.dart';
-import '../../../data/dtos/user_profile/user_profile.dart';
+import '../../../data/data_storage/user_storage.dart';
+import '../../../data/user_details/user_details_model.dart';
+import '../../../service/services/get_user_details.dart';
 import '../add_child_page/add_child_Screen.dart';
 import '../childs_profile/child_profile.dart';
 import '../settings/notification.dart';
@@ -15,11 +17,10 @@ import '../widgets/widgets.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({
-    this.userProfileDto,
     super.key,
+    this.userProfileDto,
   });
-  final UserProfileDto? userProfileDto;
-
+  final UserDto? userProfileDto;
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
@@ -32,11 +33,38 @@ class _HomeScreenState extends State<HomeScreen> {
     ProfileDetails(image: 'assets/images/advert.png', name: 'Joseph'),
     ProfileDetails(image: 'assets/images/advert.png', name: 'Mary'),
   ];
-  final bool _isShow = true;
+
+  late Future<UserDetailsResponseModelDtoTexting?> userDetails;
+  late Future<List<ChildDetailsViewModel>?> userChildDetails;
+  Future<UserDetailsResponseModelDtoTexting?> getUserDetails() async {
+    var userDetailsResponseModelDto = await UserDetailService.getUserDetails();
+    UserStorage.storePhoneNumber(
+        userDetailsResponseModelDto!.value!.phoneNumber.toString());
+    return userDetailsResponseModelDto;
+  }
+
+  Future<List<ChildDetailsViewModel>?> getUserChildDetails() async {
+    var userDetailsResponseModelDto =
+        await UserChildDetailService.getUserChildDetails();
+    return userDetailsResponseModelDto;
+  }
+
+  String firstName = UserStorage.retrieveFirstName();
+  String lastName = UserStorage.retrieveLastName();
+  String accountId = UserStorage.retrieveChildId();
+  String phoneNumber = UserStorage.retrievePhoneNumber();
 
   @override
+  void initState() {
+    userDetails = getUserDetails();
+    userChildDetails = getUserChildDetails();
+    // TODO: implement initState
+    super.initState();
+  }
+
+  String childName = '';
+  @override
   Widget build(BuildContext context) {
-    print(widget.userProfileDto?.firstName.toString());
     return Scaffold(
       body: SafeArea(
           child: SingleChildScrollView(
@@ -44,40 +72,68 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              children: [
-                const CircleAvatar(
-                  radius: 30,
-                ),
-                SizedBox(
-                  width: 11.w,
-                ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    appText(
-                        inputText: 'Welcome back,',
+
+            FutureBuilder<UserDetailsResponseModelDtoTexting?>(
+                future: userDetails,
+                builder: (context, snapshot) {
+                  var user = snapshot.data;
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(
+                      child: CircularProgressIndicator(
+                        color: AppColor.primaryColor,
+                      ),
+                    );
+                  } else if (snapshot.hasError) {
+                    return appText(
+                        inputText: 'error',
                         fontSize: 12.sp,
-                        weight: FontWeight.w400,
-                        colorName: AppColor.textPrimary),
-                    appText(
-                        inputText: widget.userProfileDto!.lastName!,
-                        fontSize: 12.sp,
-                        weight: FontWeight.w600,
-                        colorName: AppColor.textPrimary),
-                  ],
-                ),
-                const Spacer(),
-                IconButton(
-                    onPressed: () {
-                      AppNavigator.to(context, const NotificationScreen());
-                    },
-                    icon: const Icon(
-                      Icons.notifications,
-                      color: AppColor.blackColor,
-                    ))
-              ],
-            ),
+                        weight: FontWeight.w500,
+                        colorName: AppColor.textPrimary);
+                  } else {
+                    return Row(
+                      children: [
+                        CircleAvatar(
+                          backgroundColor: AppColor.primaryColor,
+                          radius: 30,
+                          child: appText(
+                              inputText: firstName[0] + lastName[0],
+                              fontSize: 20.sp,
+                              weight: FontWeight.w500,
+                              colorName: AppColor.whiteColor),
+                        ),
+                        SizedBox(
+                          width: 11.w,
+                        ),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            appText(
+                                inputText: 'Welcome back,',
+                                fontSize: 12.sp,
+                                weight: FontWeight.w400,
+                                colorName: AppColor.textPrimary),
+                            appText(
+                                inputText: firstName,
+                                fontSize: 12.sp,
+                                weight: FontWeight.w600,
+                                colorName: AppColor.textPrimary),
+
+                          ],
+                        ),
+                        const Spacer(),
+                        IconButton(
+                            onPressed: () {
+                              AppNavigator.to(
+                                  context, const NotificationScreen());
+                            },
+                            icon: const Icon(
+                              Icons.notifications,
+                              color: AppColor.blackColor,
+                            ))
+                      ],
+                    );
+                  }
+                }),
             SizedBox(
               height: 38.h,
             ),
@@ -86,7 +142,12 @@ class _HomeScreenState extends State<HomeScreen> {
               children: [
                 OutlineContainer(
                   onTap: () {
-                    AppNavigator.to(context, const CreateTask());
+                    AppNavigator.to(
+                        context,
+                        CreateTask(
+                          firstName: childName,
+                          id: accountId.toString(),
+                        ));
                   },
                   text: 'Create task',
                   width: 133,
@@ -102,12 +163,6 @@ class _HomeScreenState extends State<HomeScreen> {
                   height: 45,
                   assetImage: 'assets/icons/send.svg',
                 ),
-                // IconButton(
-                //     onPressed: () {},
-                //     icon: const Icon(
-                //       Icons.more_vert,
-                //       color: AppColor.primaryColor2,
-                //     ))
               ],
             ),
             SizedBox(height: 15.h),
@@ -147,20 +202,70 @@ class _HomeScreenState extends State<HomeScreen> {
             SizedBox(height: 20.h),
             SizedBox(
               height: 100.h,
-              child: ListView.separated(
-                scrollDirection: Axis.horizontal,
-                separatorBuilder: (context, _) => SizedBox(
-                  width: 20.w,
-                ),
-                itemCount: details.length,
-                itemBuilder: (context, index) {
-                  return buildProfile(
-                      details: details[index],
-                      onTap: () {
-                        AppNavigator.to(context, const ChildProfile());
-                      });
-                },
-              ),
+              child: FutureBuilder<List<ChildDetailsViewModel>?>(
+                  future: userChildDetails,
+                  builder: (context, snapshot) {
+                    var data = snapshot.data;
+                    // print(data);
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(
+                        child: CircularProgressIndicator(
+                          color: AppColor.primaryColor,
+                        ),
+                      );
+                    } else if (snapshot.hasError || snapshot.data!.isEmpty) {
+                      return Center(
+                        child: appText(
+                            inputText: 'Create a profile for your Child',
+                            fontSize: 12.sp,
+                            weight: FontWeight.w500,
+                            colorName: AppColor.textPrimary),
+                      );
+                    } else {
+                      return ListView.separated(
+                        scrollDirection: Axis.horizontal,
+                        separatorBuilder: (context, _) => SizedBox(
+                          width: 20.w,
+                        ),
+                        itemCount: data!.length,
+                        itemBuilder: (context, index) {
+                          final args = data[index];
+                          childName = args.toString();
+                          return GestureDetector(
+                            onTap: () {
+                              AppNavigator.to(
+                                  context,
+                                  ChildProfile(
+                                    accountNo: args.accountNumber.toString(),
+                                    firstName: args.firstName.toString(),
+                                    id: args.accountId.toString(),
+                                    lastName: args.lastName.toString(),
+                                  ));
+                            },
+                            child: Column(
+                              children: [
+                                CircleAvatar(
+                                  backgroundColor: AppColor.primaryColor,
+                                  radius: 30,
+                                  child: appText(
+                                      inputText: args.firstName![0].toString() +
+                                          args.lastName![0].toString(),
+                                      fontSize: 20.sp,
+                                      weight: FontWeight.w500,
+                                      colorName: AppColor.whiteColor),
+                                ),
+                                appText(
+                                    inputText: args.firstName.toString(),
+                                    fontSize: 14.sp,
+                                    weight: FontWeight.w500,
+                                    colorName: AppColor.textPrimary),
+                              ],
+                            ),
+                          );
+                        },
+                      );
+                    }
+                  }),
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -227,26 +332,38 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 }
-
-Widget buildProfile(
-    {required ProfileDetails details, required VoidCallback onTap}) {
-  return GestureDetector(
-    onTap: onTap,
-    child: Column(
-      children: [
-        CircleAvatar(
-          radius: 30,
-          child: Image.asset(details.image),
-        ),
-        appText(
-            inputText: details.name,
-            fontSize: 14.sp,
-            weight: FontWeight.w500,
-            colorName: AppColor.textPrimary)
-      ],
-    ),
-  );
-}
+//
+// Widget buildProfile(
+//     {required ProfileDetails details, required VoidCallback onTap}) {
+//   return FutureBuilder<UserDetailsResponseModelDto?>(
+//       future: userDetails,
+//       builder: (context, snapshot) {
+//         var data = snapshot.data;
+//         if (snapshot.connectionState == ConnectionState.waiting) {
+//           return
+//             LinearProgressIndicator(
+//               color: AppColor.blackColor,
+//             );
+//         } else {
+//           return  GestureDetector(
+//             onTap: onTap,
+//             child: Column(
+//               children: [
+//                 CircleAvatar(
+//                   radius: 30,
+//                   child: Image.asset(details.image),
+//                 ),
+//                 appText(
+//                     inputText: details.name,
+//                     fontSize: 14.sp,
+//                     weight: FontWeight.w500,
+//                     colorName: AppColor.textPrimary)
+//               ],
+//             ),
+//           );
+//         }
+//       });
+// }
 
 Widget buildAdvert(
     {required ProfileDetails details, required VoidCallback onTap}) {

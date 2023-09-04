@@ -3,7 +3,9 @@ import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import '../../core/constants/colors.dart';
-import '../../data/dtos/user_profile/user_profile.dart';
+import '../../data/dtos/login_user_dto/login_user_response_model.dart';
+import '../../data/user_details/user_details_model.dart';
+import '../../service/services/get_user_details.dart';
 import 'close app/close_app.dart';
 import 'homepage/home_page.dart';
 import 'settings/settings.dart';
@@ -12,10 +14,9 @@ import 'wallet/wallet_screen.dart';
 
 class Dashboard extends StatefulWidget {
   const Dashboard({
-    super.key,
-   this.userProfileDto,
+    super.key, this.userProfileDto,
   });
- final UserProfileDto? userProfileDto;
+  final UserDto? userProfileDto;
 
   @override
   State<Dashboard> createState() => _DashboardState();
@@ -23,14 +24,26 @@ class Dashboard extends StatefulWidget {
 
 class _DashboardState extends State<Dashboard> {
   final bool _canPop = false;
+  // late UserDetailsResponseModelDto userDetailsResponseModelDto;
+//   Future<UserDetailsResponseModelDto?> getUserDetails() async {
+//     var userDetailsResponseModelDto = await UserDetailService.getUserDetails();
+// print(userDetailsResponseModelDto!.value!.childDetailsViewModel!.first);
+//     return null;
+//   }
+
+  @override
+  void initState() {
+    super.initState();
+    // getUserDetails();
+  }
 
   @override
   Widget build(BuildContext context) {
     final screens = [
-      HomeScreen(userProfileDto: widget.userProfileDto),
+       HomeScreen(),
       const WalletScreen(),
       const TaskScreen(),
-      SettingsScreen(userProfileDto: widget.userProfileDto),
+      const SettingsScreen(),
     ];
     return WillPopScope(
       onWillPop: () async {

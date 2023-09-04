@@ -3,17 +3,21 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../core/constants/colors.dart';
 import '../../../../core/styles/app_text.dart';
 import '../../../../core/widgets/app_button.dart';
+import '../../../../data/data_storage/user_storage.dart';
 import '../../../../data/dtos/user_profile/user_profile.dart';
 
 class AccountData extends StatefulWidget {
-  const AccountData({super.key,this.userProfileDto});
-  final UserProfileDto? userProfileDto;
+  const AccountData({super.key,});
+
 
   @override
   State<AccountData> createState() => _AccountDataState();
 }
 
 class _AccountDataState extends State<AccountData> {
+
+  String email= UserStorage.retrieveEmail();
+
   @override
   Widget build(BuildContext context) {
 
@@ -35,7 +39,7 @@ class _AccountDataState extends State<AccountData> {
               height: 22.h,
             ),
             appText(
-              inputText: widget.userProfileDto!.email!,
+              inputText:email,
               fontSize: 14.sp,
               weight: FontWeight.w400,
               colorName: AppColor.textPrimary,

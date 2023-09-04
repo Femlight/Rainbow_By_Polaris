@@ -60,7 +60,7 @@ class _AccountAddedScreenState extends State<AccountAddedScreen> {
                 ),
                 TextButton(
                   onPressed: () {
-                    AppNavigator.to(context, const ChildProfile());
+                    // AppNavigator.to(context, const ChildProfile());
                   },
                   child: appText(
                       inputText: 'View Profile',

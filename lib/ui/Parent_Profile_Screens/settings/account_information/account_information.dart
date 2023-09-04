@@ -9,8 +9,8 @@ import 'account_data.dart';
 import 'personal_info.dart';
 
 class AccountInformation extends StatefulWidget {
-  const AccountInformation({super.key, this.userProfileDto});
-  final UserProfileDto? userProfileDto;
+  const AccountInformation({super.key, });
+
 
   @override
   State<AccountInformation> createState() => _AccountInformationState();
@@ -24,8 +24,8 @@ class _AccountInformationState extends State<AccountInformation> {
   @override
   Widget build(BuildContext context) {
     List<Widget> body = [
-      AccountData(userProfileDto: widget.userProfileDto),
-      PersonalInfo(userProfileDto: widget.userProfileDto),
+      AccountData(),
+      PersonalInfo(),
     ];
 
     return Scaffold(

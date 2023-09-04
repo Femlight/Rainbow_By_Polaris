@@ -60,7 +60,7 @@ class _TaskScreenState extends State<TaskScreen> {
               ),
               GestureDetector(
                 onTap: () {
-                  AppNavigator.to(context, const CreateTask());
+                  AppNavigator.to(context,  CreateTask(firstName: '', id: '',));
                 },
                 child: Center(
                   child: Container(

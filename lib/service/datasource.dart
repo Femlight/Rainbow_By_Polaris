@@ -5,24 +5,30 @@ import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 import 'package:rainbow_by_polaris/core/failure.dart';
 import '../data/dtos/create_account_dto/create_account_dto.dart';
+import '../data/dtos/create_task_dto/create_task_dto.dart';
+import '../data/dtos/create_task_dto/create_task_response_model.dart';
 import '../data/dtos/login_user_dto/login_user_dto.dart';
 import '../data/dtos/login_user_dto/login_user_response_model.dart';
 import '../data/dtos/resend_otp/resend_otp.dart';
 import '../data/dtos/validate_account_dto/response_model_dto.dart';
 import '../data/dtos/validate_account_dto/validate_account_number_dto.dart';
 import '../data/dtos/validate_account_otp_dto/validate_account_otp_dto.dart';
+import '../data/user_details/user_details_model.dart';
 import 'api_client.dart';
 import 'package:http/http.dart' as http;
 
 class AuthDataSource {
+  final dio = Dio();
   AuthDataSource({ApiClient? apiClient})
       : _apiClient = apiClient ?? ApiClient();
   final ApiClient _apiClient;
+  ////////////////////////////////////////////////////////////////////////////////////////////////
+  ///////////////////////////////////////////////////////////////////////////////////////////////
+  ///////////////////////////////////Validate Account///////////////////////////////////////////
 
   Future<ValidateAccountNumberResDto> validateAccount(
       ValidateAccountNumberDto request) async {
     try {
-      // var url = '/sso-account-register';
       final url = Uri.parse(
           'https://polaris-rainbow-identity-api-dev.azurewebsites.net/sso-account-register');
 
@@ -50,10 +56,12 @@ class AuthDataSource {
     } on Failure catch (e) {
       throw Failure(e.message);
     } catch (e, x) {
-
       throw Failure("Something went wrong. Try again");
     }
   }
+  ////////////////////////////////////////////////////////////////////////////////////////////////
+  ///////////////////////////////////////////////////////////////////////////////////////////////
+  ///////////////////////////////////verify Account Phone///////////////////////////////////////////
 
   Future<Either<String, dynamic>?> verifyAccountPhone(
       ValidateAccountOtpDto request) async {
@@ -67,13 +75,14 @@ class AuthDataSource {
         return Right(data);
       }
     } catch (e) {
-      if (e is DioException) {
-
-      }
+      if (e is DioException) {}
     }
     return null;
   }
 
+  ////////////////////////////////////////////////////////////////////////////////////////////////
+  ///////////////////////////////////////////////////////////////////////////////////////////////
+  ///////////////////////////////////create User///////////////////////////////////////////
   Future<Either<String, dynamic>?> createUser(CreateAccountDto request) async {
     const url = '/sso-complete-register';
     try {
@@ -85,12 +94,13 @@ class AuthDataSource {
         return Right(data);
       }
     } catch (e) {
-      if (e is DioException) {
-
-      }
+      if (e is DioException) {}
     }
     return null;
   }
+////////////////////////////////////////////////////////////////////////////////////////////////
+  ///////////////////////////////////////////////////////////////////////////////////////////////
+  ///////////////////////////////////Resend OTP///////////////////////////////////////////
 
   Future<Either<String, dynamic>?> resendOtp(ResendOtpDto request) async {
     const url = '/resendOtp';
@@ -103,12 +113,13 @@ class AuthDataSource {
         return Right(data);
       }
     } catch (e) {
-      if (e is DioException) {
-
-      }
+      if (e is DioException) {}
     }
     return null;
   }
+////////////////////////////////////////////////////////////////////////////////////////////////
+  ///////////////////////////////////////////////////////////////////////////////////////////////
+  ///////////////////////////////////Login User///////////////////////////////////////////
 
   Future<Either<String, LoginUserResponseModelDto>?> loginUser(
       LoginUserDto request) async {
@@ -123,6 +134,34 @@ class AuthDataSource {
           LoginUserResponseModelDto.fromJson(data),
         );
       }
+    } catch (e) {
+      if (e is DioException) {
+        final error = e.response!.data['value'][0]['message'];
+
+        return Left(error);
+      }
+    }
+    return null;
+  }
+
+////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////Create Task////////////////////////////////////////////////
+
+  Future<Either<String, CreateTaskResponseModelDto>?> createTask(
+      CreateTaskRequestDto request) async {
+    const url = '/api/v1/tasks/create';
+    try {
+      final output = await _apiClient.post(url, data: request.toJson());
+      final data = output.data;
+      if (data['isSuccess'] == false) {
+        return Left(data['error']);
+      } else {
+        return Right(
+          CreateTaskResponseModelDto.fromJson(data),
+        );
+      }
+      print('service class');
     } catch (e) {
       if (e is DioException) {
         final error = e.response!.data['value'][0]['message'];

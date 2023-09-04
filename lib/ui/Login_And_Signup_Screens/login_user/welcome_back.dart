@@ -1,16 +1,17 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:local_auth/local_auth.dart';
 import 'package:rainbow_by_polaris/core/constants/colors.dart';
 import 'package:rainbow_by_polaris/core/styles/app_text.dart';
 import 'package:rainbow_by_polaris/core/util.dart';
-import 'package:rainbow_by_polaris/data/dtos/user_profile/user_profile.dart';
+import 'package:rainbow_by_polaris/data/data_storage/username_storage.dart';
 import '../../../core/styles/spacing.dart';
 import '../../../core/validators.dart';
 import '../../../core/widgets/app_button.dart';
 import '../../../core/widgets/custom_text_input.dart';
 import '../../../core/widgets/loading_overlay_view.dart';
+import '../../../data/data_storage/access_token_storage.dart';
+import '../../../data/data_storage/biometric_storage.dart';
 import '../../../data/dtos/login_user_dto/login_user_dto.dart';
 import '../../../service/datasource.dart';
 import '../../Parent_Profile_Screens/dashboard.dart';
@@ -28,6 +29,7 @@ class _WelcomeBackState extends State<WelcomeBack> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   late final TextEditingController userNameController;
   late final TextEditingController passwordController;
+
   bool obscurePassword = true;
   bool isLoading = false;
   Validators validators = Validators();
@@ -36,6 +38,15 @@ class _WelcomeBackState extends State<WelcomeBack> {
     super.initState();
     userNameController = TextEditingController();
     passwordController = TextEditingController();
+    String accessToken = AccessTokenStorage.retrieveToken();
+    if (accessToken != null) {
+      userNameController.text = UserNameStorage.retrieveUsername();
+    }
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _letsAuthenticate();
+      if (BiometricStorage.retrieveBiometric()) {
+      } else {}
+    });
   }
 
   @override
@@ -74,17 +85,12 @@ class _WelcomeBackState extends State<WelcomeBack> {
       result?.fold((l) {
         Messenger.error(context, l);
       }, (r) {
-        final decodedData = json.decode(r.value.refreshToken!);
-
-        final userProfileDto = UserProfileDto.fromJson(decodedData);
-
+        AccessTokenStorage.storeToken(r.value.accessToken.toString());
+        UserNameStorage.storeUsername(userNameController.text);
         WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-          Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => Dashboard(
-                        userProfileDto: userProfileDto,
-                      )));
+          Navigator.pushReplacement(context,
+              MaterialPageRoute(builder: (context) => const Dashboard()));
+          String accessToken = AccessTokenStorage.retrieveToken();
         });
       });
     }
@@ -124,7 +130,7 @@ class _WelcomeBackState extends State<WelcomeBack> {
                           validators.validateFields(value!),
                     ),
                     SizedBox(
-                      height: 57.sp,
+                      height: 57.h,
                     ),
                     CustomTextInput(
                       hintText: "Password",
@@ -175,5 +181,41 @@ class _WelcomeBackState extends State<WelcomeBack> {
         ),
       ),
     );
+  }
+
+  void _letsAuthenticate() async {
+    bool isAuthenticated = await Authentication.authenticateWithBiometrics();
+    if (isAuthenticated) {
+      WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+        Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+                builder: (context) => const Dashboard(
+                    // userProfileDto: userProfileDto,
+                    )));
+        String accessToken = AccessTokenStorage.retrieveToken();
+      });
+    } else {
+      Messenger.error(
+          context, 'Please Enter Your Username and Password to Login...');
+    }
+  }
+}
+
+class Authentication {
+  static Future<bool> authenticateWithBiometrics() async {
+    final LocalAuthentication localAuthentication = LocalAuthentication();
+    bool isBiometricSupported = await localAuthentication.isDeviceSupported();
+    bool canCheckBiometrics = await localAuthentication.canCheckBiometrics;
+    bool isAuthenticated = false;
+    if (isBiometricSupported && canCheckBiometrics) {
+      List<BiometricType> biometricTypes =
+          await localAuthentication.getAvailableBiometrics();
+
+      isAuthenticated = await localAuthentication.authenticate(
+          localizedReason: 'Use your Fingerprint to Verify your Identity',
+          options: const AuthenticationOptions(biometricOnly: true));
+    }
+    return isAuthenticated;
   }
 }
