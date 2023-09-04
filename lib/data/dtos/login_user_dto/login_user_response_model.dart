@@ -1,14 +1,14 @@
 class LoginUserResponseModelDto {
-    Value value;
-    bool isSuccess;
-    String error;
+    Value? value;
+    bool? isSuccess;
+    String? error;
     dynamic message;
     dynamic responseCode;
 
     LoginUserResponseModelDto({
-        required this.value,
-        required this.isSuccess,
-        required this.error,
+         this.value,
+         this.isSuccess,
+         this.error,
         this.message,
         this.responseCode,
     });
@@ -22,7 +22,7 @@ class LoginUserResponseModelDto {
     );
 
     Map<String, dynamic> toJson() => {
-        "value": value.toJson(),
+        "value": value?.toJson(),
         "isSuccess": isSuccess,
         "error": error,
         "message": message,

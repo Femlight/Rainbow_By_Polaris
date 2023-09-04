@@ -212,24 +212,25 @@ class Messenger {
 }
 
 class DioExceptions implements Exception {
-  DioExceptions.fromDioError(DioException dioError) {
+  DioExceptions.fromDioError(DioError dioError) {
     switch (dioError.type) {
-      case DioExceptionType.cancel:
+      case DioErrorType.cancel:
         message = "Request cancelled";
         break;
-      case DioExceptionType.connectionTimeout:
+      case DioErrorType.connectTimeout:
         message = "Network error";
         break;
-      case DioExceptionType.connectionError:
+      case DioErrorType.other:
         message = "Server error";
         break;
-      case DioExceptionType.receiveTimeout:
+      case DioErrorType.receiveTimeout:
         message = "Receive timeout";
         break;
-      case DioExceptionType.values:
-        message = _handleError(dioError.response?.data);
+      case DioErrorType.response:
+        message =
+            _handleError(dioError.response?.data);
         break;
-      case DioExceptionType.sendTimeout:
+      case DioErrorType.sendTimeout:
         message = "Send timeout";
         break;
       default:
@@ -242,9 +243,9 @@ class DioExceptions implements Exception {
 
   String _handleError(dynamic error) {
     final data = error['message'];
-    if (data is String) {
+    if(data is String){
       return data;
-    } else if (data is List) {
+    }else if(data is List){
       return data[0];
     }
     return '';

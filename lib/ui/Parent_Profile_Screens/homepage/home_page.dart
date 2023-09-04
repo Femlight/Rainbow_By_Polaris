@@ -49,11 +49,6 @@ class _HomeScreenState extends State<HomeScreen> {
     return userDetailsResponseModelDto;
   }
 
-  String firstName = UserStorage.retrieveFirstName();
-  String lastName = UserStorage.retrieveLastName();
-  String accountId = UserStorage.retrieveChildId();
-  String phoneNumber = UserStorage.retrievePhoneNumber();
-
   @override
   void initState() {
     userDetails = getUserDetails();
@@ -65,6 +60,10 @@ class _HomeScreenState extends State<HomeScreen> {
   String childName = '';
   @override
   Widget build(BuildContext context) {
+    String firstName = UserStorage.retrieveFirstName();
+    String lastName = UserStorage.retrieveLastName();
+    String accountId = UserStorage.retrieveChildId();
+    String phoneNumber = UserStorage.retrievePhoneNumber();
     return Scaffold(
       body: SafeArea(
           child: SingleChildScrollView(

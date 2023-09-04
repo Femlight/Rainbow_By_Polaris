@@ -24,6 +24,7 @@ class Dashboard extends StatefulWidget {
 
 class _DashboardState extends State<Dashboard> {
   final bool _canPop = false;
+
   // late UserDetailsResponseModelDto userDetailsResponseModelDto;
 //   Future<UserDetailsResponseModelDto?> getUserDetails() async {
 //     var userDetailsResponseModelDto = await UserDetailService.getUserDetails();
@@ -39,6 +40,7 @@ class _DashboardState extends State<Dashboard> {
 
   @override
   Widget build(BuildContext context) {
+    final provider = context.watch<DashboardScreenProvider>();
     final screens = [
        HomeScreen(),
       const WalletScreen(),

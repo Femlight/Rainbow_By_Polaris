@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import '../../../core/util.dart';
 import '../../../data/data_storage/access_token_storage.dart';
 import '../../../data/dtos/create_task_dto/create_task_dto.dart';
 import '../../../data/dtos/login_user_dto/login_user_response_model.dart';
@@ -21,12 +22,10 @@ class CreateTask {
         return createTask;
       }
     } catch (e) {
-      if (e is DioException) {
-        final error = e.response!.data['value'][0]['message'];
-
-        return error;
+      if (e is DioError) {
+        final error = DioExceptions.fromDioError(e).toString();
+        return LoginUserResponseModelDto(message: error);
       }
-      return null;
     }
     return null;
   }
