@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 import 'package:rainbow_by_polaris/core/failure.dart';
+import 'package:rainbow_by_polaris/core/util.dart';
 import '../data/dtos/create_account_dto/create_account_dto.dart';
 import '../data/dtos/create_task_dto/create_task_dto.dart';
 import '../data/dtos/create_task_dto/create_task_response_model.dart';
@@ -75,7 +76,10 @@ class AuthDataSource {
         return Right(data);
       }
     } catch (e) {
-      if (e is DioException) {}
+      if (e is DioError) {
+        final error = DioExceptions.fromDioError(e).toString();
+        return Left(error);
+      }
     }
     return null;
   }
@@ -94,7 +98,10 @@ class AuthDataSource {
         return Right(data);
       }
     } catch (e) {
-      if (e is DioException) {}
+      if (e is DioError) {
+        final error = DioExceptions.fromDioError(e).toString();
+        return Left(error);
+      }
     }
     return null;
   }
@@ -113,7 +120,10 @@ class AuthDataSource {
         return Right(data);
       }
     } catch (e) {
-      if (e is DioException) {}
+      if (e is DioError) {
+        final error = DioExceptions.fromDioError(e).toString();
+        return Left(error);
+      }
     }
     return null;
   }
@@ -127,6 +137,7 @@ class AuthDataSource {
     try {
       final output = await _apiClient.post(url, data: request.toJson());
       final data = output.data;
+      print(data);
       if (data['isSuccess'] == false) {
         return Left(data['error']);
       } else {
@@ -135,9 +146,8 @@ class AuthDataSource {
         );
       }
     } catch (e) {
-      if (e is DioException) {
-        final error = e.response!.data['value'][0]['message'];
-
+      if (e is DioError) {
+        final error = DioExceptions.fromDioError(e).toString();
         return Left(error);
       }
     }
@@ -152,8 +162,9 @@ class AuthDataSource {
       CreateTaskRequestDto request) async {
     const url = '/api/v1/tasks/create';
     try {
-      final output = await _apiClient.post(url, data: request.toJson());
+      final output = await _apiClient.post(url,data: request.toJson(), isIdentity: false);
       final data = output.data;
+      print('taskData: $data');
       if (data['isSuccess'] == false) {
         return Left(data['error']);
       } else {
@@ -161,12 +172,13 @@ class AuthDataSource {
           CreateTaskResponseModelDto.fromJson(data),
         );
       }
-      print('service class');
     } catch (e) {
-      if (e is DioException) {
-        final error = e.response!.data['value'][0]['message'];
-
-        return Left(error);
+      if (e is DioError) {
+        print(e.requestOptions.data);
+        print(e.response!.data['value']['errors'][0]['message']);
+        final removeLater = e.response!.data['value']['errors'][0]['message'];
+        final error = DioExceptions.fromDioError(e).toString();
+        return Left(removeLater);
       }
     }
     return null;

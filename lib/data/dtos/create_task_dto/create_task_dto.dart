@@ -1,26 +1,26 @@
 class CreateTaskRequestDto {
-  String name;
-  String description;
-  bool isTaskReccuring;
-  String dueDate;
-  String rewardType;
-  String frequency;
-  String parentAccountId;
-  int amount;
-  int point;
-  String assignTo;
+ final String? name;
+ final String? description;
+ final bool? isTaskReccuring;
+ final String? dueDate;
+ final String? rewardType;
+ final String? frequency;
+ final String? parentAccountId;
+ final int? amount;
+  final int? point;
+ final List<String>? assignTo;
 
   CreateTaskRequestDto({
-    required this.name,
-    required this.description,
-    required this.isTaskReccuring,
-    required this.dueDate,
-    required this.rewardType,
-    required this.frequency,
-    required this.parentAccountId,
-    required this.amount,
-    required this.point,
-    required this.assignTo,
+     this.name,
+     this.description,
+     this.isTaskReccuring,
+     this.dueDate,
+     this.rewardType,
+     this.frequency,
+     this.parentAccountId,
+     this.amount,
+     this.point,
+     this.assignTo,
   });
 
   factory CreateTaskRequestDto.fromJson(Map<String, dynamic> json) => CreateTaskRequestDto(
@@ -33,7 +33,7 @@ class CreateTaskRequestDto {
     parentAccountId: json["parentAccountId"],
     amount: json["amount"],
     point: json["point"],
-    assignTo:json["assignTo"],
+    assignTo:json["assignTo"] == null ? [] : List<String>.from(json["assignTO"]!.map((e) => e)),
   );
 
   Map<String, dynamic> toJson() => {
