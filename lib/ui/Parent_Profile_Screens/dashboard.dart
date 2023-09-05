@@ -25,8 +25,6 @@ class Dashboard extends StatefulWidget {
 
 class _DashboardState extends State<Dashboard> {
   final bool _canPop = false;
-<<<<<<< HEAD
-=======
 
   // late UserDetailsResponseModelDto userDetailsResponseModelDto;
 //   Future<UserDetailsResponseModelDto?> getUserDetails() async {
@@ -34,7 +32,6 @@ class _DashboardState extends State<Dashboard> {
 // print(userDetailsResponseModelDto!.value!.childDetailsViewModel!.first);
 //     return null;
 //   }
->>>>>>> 543e435eec2b6719e6f259af0216f997a4affae2
 
   @override
   void initState() {
@@ -44,12 +41,7 @@ class _DashboardState extends State<Dashboard> {
 
   @override
   Widget build(BuildContext context) {
-<<<<<<< HEAD
-    // final provider = context.watch<DashboardScreenProvider>();
-    // provider.newPageIndex = 0;
-=======
     final provider = context.watch<DashboardScreenProvider>();
->>>>>>> 543e435eec2b6719e6f259af0216f997a4affae2
     final screens = [
       const HomeScreen(),
       const WalletScreen(),

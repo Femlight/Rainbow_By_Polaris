@@ -173,20 +173,12 @@ class AuthDataSource {
         );
       }
     } catch (e) {
-<<<<<<< HEAD
-      if (e is DioException) {
-        print(e.response!.data);
-        final error = e.response!.data['value'][0]['message'];
-
-        return Left(error);
-=======
       if (e is DioError) {
         print(e.requestOptions.data);
         print(e.response!.data['value']['errors'][0]['message']);
         final removeLater = e.response!.data['value']['errors'][0]['message'];
         final error = DioExceptions.fromDioError(e).toString();
         return Left(removeLater);
->>>>>>> 543e435eec2b6719e6f259af0216f997a4affae2
       }
     }
     return null;

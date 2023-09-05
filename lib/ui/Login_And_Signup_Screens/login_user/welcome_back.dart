@@ -85,12 +85,7 @@ class _WelcomeBackState extends State<WelcomeBack> {
       result?.fold((l) {
         Messenger.error(context, l);
       }, (r) {
-<<<<<<< HEAD
-
-        AccessTokenStorage.storeToken(r.value.accessToken.toString());
-=======
         AccessTokenStorage.storeToken(r.value!.accessToken.toString());
->>>>>>> 543e435eec2b6719e6f259af0216f997a4affae2
         UserNameStorage.storeUsername(userNameController.text);
         WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
           Navigator.pushReplacement(context,
