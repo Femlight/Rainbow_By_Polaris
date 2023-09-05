@@ -39,7 +39,7 @@ class _WelcomeBackState extends State<WelcomeBack> {
     userNameController = TextEditingController();
     passwordController = TextEditingController();
     String accessToken = AccessTokenStorage.retrieveToken();
-    if (accessToken != null) {
+    if (accessToken != '') {
       userNameController.text = UserNameStorage.retrieveUsername();
     }
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -85,8 +85,12 @@ class _WelcomeBackState extends State<WelcomeBack> {
       result?.fold((l) {
         Messenger.error(context, l);
       }, (r) {
+<<<<<<< HEAD
 
         AccessTokenStorage.storeToken(r.value.accessToken.toString());
+=======
+        AccessTokenStorage.storeToken(r.value!.accessToken.toString());
+>>>>>>> 543e435eec2b6719e6f259af0216f997a4affae2
         UserNameStorage.storeUsername(userNameController.text);
         WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
           Navigator.pushReplacement(context,
@@ -197,8 +201,10 @@ class _WelcomeBackState extends State<WelcomeBack> {
         String accessToken = AccessTokenStorage.retrieveToken();
       });
     } else {
+    if(mounted) {
       Messenger.error(
           context, 'Please Enter Your Username and Password to Login...');
+    }
     }
   }
 }

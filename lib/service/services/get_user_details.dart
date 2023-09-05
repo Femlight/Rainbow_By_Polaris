@@ -1,5 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
+import '../../core/util.dart';
 import '../../data/data_storage/access_token_storage.dart';
 import '../../data/data_storage/user_storage.dart';
 import '../../data/user_details/user_details_model.dart';
@@ -27,10 +28,9 @@ class UserDetailService {
         return userDetails;
       }
     } catch (e) {
-      if (e is DioException) {
-        final error = e.response!.data['value'][0]['message'];
-
-        return error;
+      if (e is DioError) {
+        final error = DioExceptions.fromDioError(e).toString();
+        return UserDetailsResponseModelDtoTexting(message: error);
       }
     }
     return null;
@@ -56,10 +56,8 @@ class UserChildDetailService {
 
       }
     } catch (e) {
-      if (e is DioException) {
-        final error = e.response!.data['value'][0]['message'];
-
-        return error;
+      if (e is DioError) {
+        return null;
       }
     }
     return null;

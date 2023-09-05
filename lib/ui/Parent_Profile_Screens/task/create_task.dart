@@ -8,6 +8,7 @@ import '../../../core/styles/app_text.dart';
 import '../../../core/styles/spacing.dart';
 import '../../../core/styles/text.dart';
 import '../../../core/util.dart';
+import '../../../core/validators.dart';
 import '../../../core/widgets/app_button.dart';
 import '../../../core/widgets/appbars/custom_appbar.dart';
 import '../../../core/widgets/custom_dropdown_button.dart';
@@ -35,6 +36,7 @@ class CreateTask extends StatefulWidget {
 
 class _CreateTaskState extends State<CreateTask> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final validator = Validators();
   final TextEditingController descriptionController = TextEditingController();
   final TextEditingController nameController = TextEditingController();
   final TextEditingController amountController = TextEditingController();
@@ -49,32 +51,44 @@ class _CreateTaskState extends State<CreateTask> {
   // List of items in our dropdown menu
   List items = ['childId'];
   List reward = [
-    'cash',
+    'Cash',
   ];
 
   void submit() async {
     if (_formKey.currentState!.validate()) {
-      final request = CreateTaskRequestDto(
-          name: nameController.text,
-          description: descriptionController.text,
-          isTaskReccuring: true,
-          dueDate: dateController.text,
-          rewardType: valueChoose.toString(),
-          frequency: "OneOff",
-          parentAccountId: parentId,
-          amount: 500,
-          point: 1,
-          assignTo: dropDownValue.toString());
-      final authSource = AuthDataSource();
-      setState(() => isLoading = true);
-      print('I day here ------am here');
-      final response = await authSource.createTask(request);
-      print('am here');
-      setState(() => isLoading = false);
-      response!.fold((l) => Messenger.error(context, l), (r) {
-        Messenger.success(context, r.message.toString());
-      });
-    }
+      if(dateController.text.isEmpty){
+        Messenger.error(context, 'Set due date');
+        return;
+      }
+      if(dropDownValue == null) {
+        Messenger.error(context, 'Choose who you\'re assigning to');
+        return;
+      }
+      if(valueChoose == null) {
+        Messenger.error(context, 'Choose reward type');
+        return;
+      }
+        final request = CreateTaskRequestDto(
+            name: nameController.text,
+            description: descriptionController.text,
+            isTaskReccuring: true,
+            dueDate: dateController.text,
+            rewardType: valueChoose,
+            frequency: "OneOff",
+            parentAccountId: parentId,
+            amount: int.parse(amountController.text),
+            point: 1,
+            assignTo: [childId]);
+        final authSource = AuthDataSource();
+        setState(() => isLoading = true);
+        print('I day here ------am here');
+        final response = await authSource.createTask(request);
+        print('am here');
+        setState(() => isLoading = false);
+        response!.fold((l) => Messenger.error(context, l), (r) {
+          Messenger.success(context, r.message.toString());
+        });
+      }
   }
 
   late Future<UserDetailsResponseModelDtoTexting?> userDetails;
@@ -110,9 +124,6 @@ class _CreateTaskState extends State<CreateTask> {
         appBar: CustomAppBar(
           title: 'Tasks',
           backgroundColor: AppColor.primaryColor,
-          onBackPressed: () {
-            Navigator.pop(context);
-          },
           actions: [
             IconButton(
               onPressed: () {
@@ -145,10 +156,11 @@ class _CreateTaskState extends State<CreateTask> {
               SizedBox(
                 height: 19.h,
               ),
-              const CustomTextInput2(
+               CustomTextInput2(
                 hintText: "Name",
                 keyboardType: TextInputType.text,
-                // controller: userNameController,
+                validator: (val)=>validator.validateName(val!),
+                 controller: nameController,
                 // preIconData: Icons.person,
               ),
               const SizedBox(
@@ -186,7 +198,7 @@ class _CreateTaskState extends State<CreateTask> {
                       fontWeight: FontWeight.w300,
                       fontSize: 12.sp),
                 ),
-                // validator: validator,
+                 validator: (val) => validator.validateFields(val!),
               ),
               const SizedBox(
                 height: 18,
@@ -232,18 +244,18 @@ class _CreateTaskState extends State<CreateTask> {
               const SizedBox(
                 height: 18,
               ),
-              CustomDropDownButton(
+              CustomDropDownButton<String>(
                 onChanged: (newValue) {
                   setState(() {
-                    valueChoose = newValue.toString();
+                    valueChoose = newValue!;
                   });
                 },
                 selectedValue: valueChoose,
-                items: items.map((items) {
+                items: reward.map((item) {
                   // final args = data;
-                  return DropdownMenuItem(
-                    value: items,
-                    child: const Text('Cash'),
+                  return DropdownMenuItem<String>(
+                    value: item,
+                    child:  Text(item),
                   );
                 }).toList(),
                 hintText: 'Reward Type',
@@ -251,10 +263,11 @@ class _CreateTaskState extends State<CreateTask> {
               const SizedBox(
                 height: 18,
               ),
-              const CustomTextInput2(
+               CustomTextInput2(
                 hintText: "Amount",
                 keyboardType: TextInputType.number,
-                // controller: userNameController,
+                validator: (val)=>validator.validateFields(val!),
+                 controller: amountController,
               ),
               const SizedBox(
                 height: 18,
