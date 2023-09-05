@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:iconsax/iconsax.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:rainbow_by_polaris/core/util.dart';
 import '../../../../core/constants/colors.dart';
 import '../../../../core/helpers/navigator.dart';
 import '../../../../core/styles/app_text.dart';
@@ -8,11 +12,20 @@ import '../../../../core/validators.dart';
 import '../../../../core/widgets/app_button.dart';
 import '../../../../core/widgets/appbars/custom_appbar.dart';
 import '../../../../core/widgets/custom_text_input.dart';
-import '../../settings/notification.dart';
 import 'account_added_screen.dart';
 
 class AddChildScreenWithExistingAccount extends StatefulWidget {
-  const AddChildScreenWithExistingAccount({super.key});
+  const AddChildScreenWithExistingAccount(
+      {super.key,
+      required this.firstName,
+      required this.accountNo,
+      required this.id,
+      required this.lastName});
+  final String firstName;
+  final String lastName;
+  final String accountNo;
+  final String id;
+  // File? _image;
 
   @override
   State<AddChildScreenWithExistingAccount> createState() =>
@@ -62,6 +75,24 @@ class _AddChildScreenWithExistingAccountState
     (context as Element).visitChildren(rebuild);
   }
 
+  String selectedImagePath = '';
+  String selectedImageName = '';
+  String image = '';
+  Future<void> getImage(ImageSource source) async {
+    try {
+      final image = await ImagePicker().pickImage(source: source);
+      if (image != null) {
+        setState(() {
+          selectedImagePath = image.path;
+          selectedImageName = image.path.split('/').last;
+        });
+        // _uploadImage();
+      } else {
+        Messenger.success(context, 'No Image picked');
+      }
+    } on PlatformException catch (e) {}
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -72,21 +103,6 @@ class _AddChildScreenWithExistingAccountState
         onBackPressed: () {
           Navigator.pop(context);
         },
-        actions: [
-          IconButton(
-            onPressed: () {
-              AppNavigator.to(context, const NotificationScreen());
-            },
-            icon: const Badge(
-              label: Text('30'),
-              textColor: Colors.white,
-              child: Icon(
-                Icons.notifications,
-                color: Colors.black,
-              ),
-            ),
-          )
-        ],
       ),
       body: SingleChildScrollView(
         padding: AppPadding.defaultPadding,
@@ -108,29 +124,60 @@ class _AddChildScreenWithExistingAccountState
                   height: 48.h,
                 ),
                 GestureDetector(
-                  onTap: () {},
-                  child: CircleAvatar(
-                    backgroundColor: AppColor.grayColor,
-                    radius: 35,
-                    child: appText(
-                        inputText: 'Add Photo',
-                        fontSize: 10.sp,
-                        weight: FontWeight.w500,
-                        colorName: AppColor.textPrimary),
+                  onTap: () {
+                    showModalBottomSheet(
+                        isScrollControlled: true,
+                        isDismissible: true,
+                        shape: const RoundedRectangleBorder(
+                            borderRadius: BorderRadius.vertical(
+                                top: Radius.circular(50))),
+                        context: context,
+                        builder: (context) => profileImagePicker());
+                  },
+                  child: Container(
+                    height: 94.h,
+                    width: 94.w,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      image: selectedImagePath.isEmpty
+                          ? DecorationImage(
+                              fit: BoxFit.cover,
+                              image: image.isEmpty
+                                  ? AssetImage('images/picture.png')
+                                  : Image.network(image).image,
+                            )
+                          : DecorationImage(
+                              image: Image.file(File(selectedImagePath)).image,
+                              fit: BoxFit.cover,
+                            ),
+                    ),
+                    // CircleAvatar(
+                    //     backgroundColor: AppColor.grayColor,
+                    //     radius: 50,
+                    //     child: image == null
+                    //         ? appText(
+                    //             inputText: 'Add Photo',
+                    //             fontSize: 10.sp,
+                    //             weight: FontWeight.w500,
+                    //             colorName: AppColor.textPrimary)
+                    //         : Image.file(File(image!.path))),
                   ),
+                ),
+                SizedBox(
+                  height: 10.h,
                 ),
                 appText(
                     inputText: 'Please Create a Profile for:',
-                    fontSize: 10.sp,
+                    fontSize: 12.sp,
                     weight: FontWeight.w500,
                     colorName: AppColor.textPrimary),
                 SizedBox(
                   height: 12.h,
                 ),
-                const Text.rich(
+                Text.rich(
                   TextSpan(
                     children: [
-                      TextSpan(
+                      const TextSpan(
                         text: 'Account Name: ',
                         style: TextStyle(
                           color: Colors.black,
@@ -140,8 +187,8 @@ class _AddChildScreenWithExistingAccountState
                         ),
                       ),
                       TextSpan(
-                        text: 'Aaron Peters',
-                        style: TextStyle(
+                        text: widget.firstName,
+                        style: const TextStyle(
                           color: Colors.black,
                           fontSize: 12,
                           fontFamily: 'Inter',
@@ -154,10 +201,10 @@ class _AddChildScreenWithExistingAccountState
                 SizedBox(
                   height: 7.h,
                 ),
-                const Text.rich(
+                Text.rich(
                   TextSpan(
                     children: [
-                      TextSpan(
+                      const TextSpan(
                         text: 'Account Number: ',
                         style: TextStyle(
                           color: Colors.black,
@@ -167,8 +214,8 @@ class _AddChildScreenWithExistingAccountState
                         ),
                       ),
                       TextSpan(
-                        text: '1020304050',
-                        style: TextStyle(
+                        text: widget.accountNo,
+                        style: const TextStyle(
                           color: Colors.black,
                           fontSize: 12,
                           fontFamily: 'Inter',
@@ -180,15 +227,6 @@ class _AddChildScreenWithExistingAccountState
                 ),
                 SizedBox(
                   height: 47.h,
-                ),
-                const CustomTextInput(
-                  hintText: "Child Account Number",
-                  keyboardType: TextInputType.number,
-                  // controller: accountNumberController,
-                  preIconData: Icons.account_balance,
-                ),
-                SizedBox(
-                  height: 31.h,
                 ),
                 const CustomTextInput(
                   hintText: "Child Email Address",
@@ -221,7 +259,7 @@ class _AddChildScreenWithExistingAccountState
                   hintText: "Password",
                   keyboardType: TextInputType.text,
                   obscureText: obscurePassword,
-                  // controller: passwordController,
+                  controller: passwordController,
                   preIconData: Icons.lock_rounded,
                   sufIconData: obscurePassword
                       ? Icons.visibility_off_outlined
@@ -244,7 +282,7 @@ class _AddChildScreenWithExistingAccountState
                   hintText: "Confirm Password",
                   keyboardType: TextInputType.text,
                   obscureText: obscurePassword,
-                  // controller: confirmPasswordController,
+                  controller: confirmPasswordController,
                   preIconData: Icons.lock_rounded,
                   sufIconData: obscurePassword
                       ? Icons.visibility_off_outlined
@@ -253,10 +291,9 @@ class _AddChildScreenWithExistingAccountState
                     toggleObscurePassword();
                     rebuildAllChildren(context);
                   },
-
-                  // validator: (String? value) =>
-                  //     validators.validateConfirmPassword(
-                  //         value: value, passwordEntry: passwordController.text),
+                  validator: (String? value) =>
+                      validators.validateConfirmPassword(
+                          value: value, passwordEntry: passwordController.text),
                 ),
                 SizedBox(
                   height: 57.sp,
@@ -265,7 +302,7 @@ class _AddChildScreenWithExistingAccountState
                   onPressed: () {
                     AppNavigator.to(context, const AccountAddedScreen());
                   },
-                  buttonText: 'Generate',
+                  buttonText: 'Done',
                   containerHeight: 44.h,
                   containerWidth: 189.w,
                   borderRadiusSize: 0,
@@ -278,6 +315,96 @@ class _AddChildScreenWithExistingAccountState
                 ),
               ]),
         ),
+      ),
+    );
+  }
+
+  Widget profileImagePicker() {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 34.h),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          appText(
+              inputText: 'Edit Profile Image',
+              fontSize: 20.sp,
+              weight: FontWeight.w500,
+              colorName: AppColor.textPrimary),
+          SizedBox(height: 15.h),
+          buildImagePickerButton(
+            onPressed: () async {
+              await getImage(ImageSource.camera);
+              // if(image != null){
+              // _uploadImage();}
+              Navigator.pop(context);
+            },
+            buttonText: 'Camera',
+            pixIcon: Iconsax.camera,
+          ),
+          SizedBox(
+            height: 20.h,
+          ),
+          buildImagePickerButton(
+            buttonText: 'Gallery',
+            pixIcon: Iconsax.gallery5,
+            onPressed: () async {
+              await getImage(ImageSource.gallery);
+              // if(image != null){
+              // _uploadImage();}
+              Navigator.pop(context);
+            },
+          ),
+          SizedBox(height: 50.h),
+        ],
+      ),
+    );
+  }
+
+  Widget buildImagePickerButton(
+      {required VoidCallback onPressed,
+      required String buttonText,
+      required IconData pixIcon}) {
+    return SizedBox(
+      height: 60.h,
+      width: 366.w,
+      child: ElevatedButton(
+        onPressed: onPressed,
+        child: Padding(
+          padding: EdgeInsets.only(left: 20.w, right: 20.58.h),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                children: [
+                  Icon(pixIcon, color: AppColor.primaryColor),
+                  SizedBox(
+                    width: 18.w,
+                  ),
+                  Text(
+                    buttonText,
+                    style: TextStyle(
+                      color: AppColor.textPrimary,
+                      fontSize: 16.sp,
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
+                ],
+              ),
+              Icon(
+                Icons.arrow_forward_ios_rounded,
+                color: Color(0xff292D32),
+                size: 15.w,
+              ),
+            ],
+          ),
+        ),
+        style: ElevatedButton.styleFrom(
+            elevation: 0,
+            backgroundColor: AppColor.grayColor,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            )),
       ),
     );
   }

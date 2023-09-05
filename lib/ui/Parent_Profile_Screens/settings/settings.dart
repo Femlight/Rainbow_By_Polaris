@@ -127,7 +127,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
     // await OnboardingStorage.storeOnboarding(true);
 
     // ignore: use_build_context_synchronously
-    Navigator.pushAndRemoveUntil(context,
-        MaterialPageRoute(builder: (context) => const Login()), (_) => false);
+    Navigator.of(context,).pushAndRemoveUntil(
+        MaterialPageRoute(
+      builder: (BuildContext context) {
+        return const Login();
+      },
+    ), (_) => true);
   }
 }

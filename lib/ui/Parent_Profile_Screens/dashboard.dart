@@ -14,7 +14,8 @@ import 'wallet/wallet_screen.dart';
 
 class Dashboard extends StatefulWidget {
   const Dashboard({
-    super.key, this.userProfileDto,
+    super.key,
+    this.userProfileDto,
   });
   final UserDto? userProfileDto;
 
@@ -24,12 +25,6 @@ class Dashboard extends StatefulWidget {
 
 class _DashboardState extends State<Dashboard> {
   final bool _canPop = false;
-  // late UserDetailsResponseModelDto userDetailsResponseModelDto;
-//   Future<UserDetailsResponseModelDto?> getUserDetails() async {
-//     var userDetailsResponseModelDto = await UserDetailService.getUserDetails();
-// print(userDetailsResponseModelDto!.value!.childDetailsViewModel!.first);
-//     return null;
-//   }
 
   @override
   void initState() {
@@ -39,8 +34,10 @@ class _DashboardState extends State<Dashboard> {
 
   @override
   Widget build(BuildContext context) {
+    // final provider = context.watch<DashboardScreenProvider>();
+    // provider.newPageIndex = 0;
     final screens = [
-       HomeScreen(),
+      const HomeScreen(),
       const WalletScreen(),
       const TaskScreen(),
       const SettingsScreen(),
@@ -63,6 +60,7 @@ class _DashboardState extends State<Dashboard> {
       },
       child: Consumer<DashboardScreenProvider>(
           builder: (context, dashboardProvider, child) {
+        print('AM in Provider${dashboardProvider._navIdex}');
         return Scaffold(
           body: screens[dashboardProvider.pageIndex],
           bottomNavigationBar: BottomNavigationBar(

@@ -164,6 +164,7 @@ class AuthDataSource {
       print('service class');
     } catch (e) {
       if (e is DioException) {
+        print(e.response!.data);
         final error = e.response!.data['value'][0]['message'];
 
         return Left(error);

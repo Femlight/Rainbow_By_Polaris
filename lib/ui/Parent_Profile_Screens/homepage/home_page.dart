@@ -72,7 +72,6 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-
             FutureBuilder<UserDetailsResponseModelDtoTexting?>(
                 future: userDetails,
                 builder: (context, snapshot) {
@@ -117,7 +116,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                 fontSize: 12.sp,
                                 weight: FontWeight.w600,
                                 colorName: AppColor.textPrimary),
-
                           ],
                         ),
                         const Spacer(),
