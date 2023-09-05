@@ -18,11 +18,11 @@ class Validators {
     return null;
   }
 
-  String validateName(String value) {
+  String? validateName(String value) {
     if (value.length < 3) {
       return 'entry is too short';
     }
-    return "";
+    return null;
   }
 
   String? validateFields(String value) {

@@ -172,9 +172,9 @@ class AuthDataSource {
           CreateTaskResponseModelDto.fromJson(data),
         );
       }
-      print('service class');
     } catch (e) {
       if (e is DioError) {
+        print(e.requestOptions.data);
         print(e.response!.data['value']['errors'][0]['message']);
         final removeLater = e.response!.data['value']['errors'][0]['message'];
         final error = DioExceptions.fromDioError(e).toString();
