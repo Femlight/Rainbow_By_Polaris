@@ -126,45 +126,50 @@ class _AddChildScreenWithExistingAccountState
                   height: 48.h,
                 ),
                 GestureDetector(
-                  onTap: () {
-                    showModalBottomSheet(
-                        isScrollControlled: true,
-                        isDismissible: true,
-                        shape: const RoundedRectangleBorder(
-                            borderRadius: BorderRadius.vertical(
-                                top: Radius.circular(50))),
-                        context: context,
-                        builder: (context) => profileImagePicker());
-                  },
-                  child: Container(
-                    height: 94.h,
-                    width: 94.w,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      image: selectedImagePath.isEmpty
-                          ? DecorationImage(
-                              fit: BoxFit.cover,
-                              image: image.isEmpty
-                                  ? AssetImage('images/picture.png')
-                                  : Image.network(image).image,
-                            )
-                          : DecorationImage(
-                              image: Image.file(File(selectedImagePath)).image,
-                              fit: BoxFit.cover,
-                            ),
+                    onTap: () {
+                      showModalBottomSheet(
+                          isScrollControlled: true,
+                          isDismissible: true,
+                          shape: const RoundedRectangleBorder(
+                              borderRadius: BorderRadius.vertical(
+                                  top: Radius.circular(50))),
+                          context: context,
+                          builder: (context) => profileImagePicker());
+                    },
+                    child: Container(
+                      height: 94.h,
+                      width: 94.w,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        image: selectedImagePath.isEmpty
+                            ? DecorationImage(
+                                fit: BoxFit.cover,
+                                image: image.isEmpty
+                                    ? const AssetImage(
+                                        'assets/images/debbie.png')
+                                    : Image.network(image).image,
+                              )
+                            : DecorationImage(
+                                image:
+                                    Image.file(File(selectedImagePath)).image,
+                                fit: BoxFit.cover,
+                              ),
+                      ),
+                    )
+                    //     CircleAvatar(
+                    //   backgroundColor: AppColor.grayColor,
+                    //   radius: 50,
+                    //   child: image ==null
+                    //       ? appText(
+                    //           inputText: 'Add Photo',
+                    //           fontSize: 10.sp,
+                    //           weight: FontWeight.w500,
+                    //           colorName: AppColor.textPrimary)
+                    //       : Image.file(
+                    //           File(selectedImagePath),
+                    //         ),
+                    // ),
                     ),
-                    // CircleAvatar(
-                    //     backgroundColor: AppColor.grayColor,
-                    //     radius: 50,
-                    //     child: image == null
-                    //         ? appText(
-                    //             inputText: 'Add Photo',
-                    //             fontSize: 10.sp,
-                    //             weight: FontWeight.w500,
-                    //             colorName: AppColor.textPrimary)
-                    //         : Image.file(File(image!.path))),
-                  ),
-                ),
                 SizedBox(
                   height: 10.h,
                 ),

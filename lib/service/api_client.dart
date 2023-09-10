@@ -6,7 +6,7 @@ class ApiClient{
  final Dio _dio;
 
 ApiClient ({Dio? dio}) : _dio = dio ?? Dio(BaseOptions(
-    connectTimeout: 15000,
+    // connectTimeout: 50000,
 ));
 
 Future<dynamic> post(String url, {Map<String, dynamic>? data,

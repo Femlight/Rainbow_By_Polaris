@@ -1,7 +1,5 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:intl/intl.dart';
 import '../../../core/constants/colors.dart';
 import '../../../core/helpers/functions.dart';
 import '../../../core/styles/app_text.dart';
@@ -47,8 +45,6 @@ class _CreateTaskState extends State<CreateTask> {
   String childId = UserStorage.retrieveChildId();
   bool isLoading = false;
   String dateString = "2023-08-29";
-
-  // List of items in our dropdown menu
   List items = ['childId'];
   List reward = [
     'Cash',
@@ -56,39 +52,39 @@ class _CreateTaskState extends State<CreateTask> {
 
   void submit() async {
     if (_formKey.currentState!.validate()) {
-      if(dateController.text.isEmpty){
+      if (dateController.text.isEmpty) {
         Messenger.error(context, 'Set due date');
         return;
       }
-      if(dropDownValue == null) {
+      if (dropDownValue == null) {
         Messenger.error(context, 'Choose who you\'re assigning to');
         return;
       }
-      if(valueChoose == null) {
+      if (valueChoose == null) {
         Messenger.error(context, 'Choose reward type');
         return;
       }
-        final request = CreateTaskRequestDto(
-            name: nameController.text,
-            description: descriptionController.text,
-            isTaskReccuring: true,
-            dueDate: dateController.text,
-            rewardType: valueChoose,
-            frequency: "OneOff",
-            parentAccountId: parentId,
-            amount: int.parse(amountController.text),
-            point: 1,
-            assignTo: [childId]);
-        final authSource = AuthDataSource();
-        setState(() => isLoading = true);
-        print('I day here ------am here');
-        final response = await authSource.createTask(request);
-        print('am here');
-        setState(() => isLoading = false);
-        response!.fold((l) => Messenger.error(context, l), (r) {
-          Messenger.success(context, r.message.toString());
-        });
-      }
+      final request = CreateTaskRequestDto(
+          name: nameController.text,
+          description: descriptionController.text,
+          isTaskReccuring: true,
+          dueDate: dateController.text,
+          rewardType: valueChoose,
+          frequency: "OneOff",
+          parentAccountId: parentId,
+          amount: int.parse(amountController.text),
+          point: 1,
+          assignTo: [childId]);
+      final authSource = AuthDataSource();
+      setState(() => isLoading = true);
+      print('I day here ------am here');
+      final response = await authSource.createTask(request);
+      print('am here');
+      setState(() => isLoading = false);
+      response!.fold((l) => Messenger.error(context, l), (r) {
+        Messenger.success(context, r.message.toString());
+      });
+    }
   }
 
   late Future<UserDetailsResponseModelDtoTexting?> userDetails;
@@ -156,11 +152,11 @@ class _CreateTaskState extends State<CreateTask> {
               SizedBox(
                 height: 19.h,
               ),
-               CustomTextInput2(
+              CustomTextInput2(
                 hintText: "Name",
                 keyboardType: TextInputType.text,
-                validator: (val)=>validator.validateName(val!),
-                 controller: nameController,
+                validator: (val) => validator.validateName(val!),
+                controller: nameController,
                 // preIconData: Icons.person,
               ),
               const SizedBox(
@@ -198,7 +194,7 @@ class _CreateTaskState extends State<CreateTask> {
                       fontWeight: FontWeight.w300,
                       fontSize: 12.sp),
                 ),
-                 validator: (val) => validator.validateFields(val!),
+                validator: (val) => validator.validateFields(val!),
               ),
               const SizedBox(
                 height: 18,
@@ -214,7 +210,7 @@ class _CreateTaskState extends State<CreateTask> {
                           color: AppColor.primaryColor,
                         ),
                       );
-                    } else if (snapshot.hasError || snapshot.data!.isEmpty) {
+                    } else if (snapshot.hasError) {
                       return Center(
                         child: appText(
                             inputText: 'Create a profile for your Child',
@@ -255,7 +251,7 @@ class _CreateTaskState extends State<CreateTask> {
                   // final args = data;
                   return DropdownMenuItem<String>(
                     value: item,
-                    child:  Text(item),
+                    child: Text(item),
                   );
                 }).toList(),
                 hintText: 'Reward Type',
@@ -263,11 +259,11 @@ class _CreateTaskState extends State<CreateTask> {
               const SizedBox(
                 height: 18,
               ),
-               CustomTextInput2(
+              CustomTextInput2(
                 hintText: "Amount",
                 keyboardType: TextInputType.number,
-                validator: (val)=>validator.validateFields(val!),
-                 controller: amountController,
+                validator: (val) => validator.validateFields(val!),
+                controller: amountController,
               ),
               const SizedBox(
                 height: 18,
@@ -307,9 +303,6 @@ class _CreateTaskState extends State<CreateTask> {
               ),
               BuildButton(
                 onPressed: submit,
-                //     () {
-                //   // AppNavigator.pushReplacement(context, const AccountCreated());
-                // },
                 buttonText: 'Add Task',
                 containerHeight: 44.h,
                 containerWidth: 189.w,

@@ -135,67 +135,10 @@ class _AddChildScreenState extends State<AddChildScreen> {
                                   ));
                             },
                           );
-
-                          GestureDetector(
-                            onTap: () {
-                              AppNavigator.to(
-                                  context,
-                                  AddChildScreenWithExistingAccount(
-                                    accountNo: args.accountNumber.toString(),
-                                    firstName: args.firstName.toString(),
-                                    id: args.accountId.toString(),
-                                    lastName: args.lastName.toString(),
-                                  ));
-                            },
-                            child: Column(
-                              children: [
-                                CircleAvatar(
-                                  backgroundColor: AppColor.primaryColor,
-                                  radius: 30,
-                                  child: appText(
-                                      inputText: args.firstName![0].toString() +
-                                          args.lastName![0].toString(),
-                                      fontSize: 20.sp,
-                                      weight: FontWeight.w500,
-                                      colorName: AppColor.whiteColor),
-                                ),
-                                appText(
-                                    inputText: args.firstName.toString(),
-                                    fontSize: 14.sp,
-                                    weight: FontWeight.w500,
-                                    colorName: AppColor.textPrimary),
-                              ],
-                            ),
-                          );
                         },
                       );
                     }
                   }),
-              // Center(
-              //   child: Column(
-              //     children: [
-              //       AccountDetails(
-              //         accountName: 'Debbie Okorie',
-              //         accountNumber: '1234567890',
-              //         onTap: () {
-              //           AppNavigator.to(
-              //               context, const AddChildScreenWithExistingAccount());
-              //         },
-              //       ),
-              //       SizedBox(
-              //         height: 18.h,
-              //       ),
-              //       AccountDetails(
-              //         accountName: 'Aaron Peter',
-              //         accountNumber: '1234567890',
-              //         onTap: () {
-              //           AppNavigator.to(
-              //               context, const AddChildScreenWithExistingAccount());
-              //         },
-              //       ),
-              //     ],
-              //   ),
-              // ),
               SizedBox(
                 height: 86.h,
               ),

@@ -83,7 +83,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     );
                   } else if (snapshot.hasError) {
                     return appText(
-                        inputText: 'error',
+                        inputText: 'Please Reload',
                         fontSize: 12.sp,
                         weight: FontWeight.w500,
                         colorName: AppColor.textPrimary);
